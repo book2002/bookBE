@@ -42,3 +42,4 @@ out/
 Thumbs.db
 
 src/main/resources/serviceAccountKey.json
+/src/main/resources/application-local.yml

@@ -1,24 +1,7 @@
 spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/book?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: root
-    password: Qojdud28~
-    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: 59871878205-98riv2ev06peuof5chvhbfoneedh378g.apps.googleusercontent.com
-            client-secret: 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
-            scope:
-              - email
-              - profile
-jwt:
-  secret: Fwxs/yleTU1wE/TpfgJX5qwZCkhqMN3snedsQUH1T6B32OJGAXoBoe0bU6waEj6U440FxZpNSQLp6ecEdnghig==
-  expiration: 3600000
+  profiles:
+    active: local
