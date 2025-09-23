@@ -35,3 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+*.log
+
+.DS_Store
+Thumbs.db
+
+src/main/resources/serviceAccountKey.json
