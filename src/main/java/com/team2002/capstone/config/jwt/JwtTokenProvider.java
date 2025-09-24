@@ -51,6 +51,16 @@ public class JwtTokenProvider {
                 .build();
     }
 
+    public JwtTokenDTO generateToken(Member member, boolean isNewUser) {
+        // Member의 권한을 Authentication 객체로 변환
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                member.getEmail(),
+                member.getPassword(),
+                List.of(new SimpleGrantedAuthority(member.getRole().name()))
+        );
+
+        return generateToken(authentication);
+    }
 
     public JwtTokenDTO generateToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
@@ -72,7 +82,7 @@ public class JwtTokenProvider {
 
         // RefreshToken
         String refreshToken = Jwts.builder()
-                .setSubject(authentication.getName())  // 보통 username(email)
+                .setSubject(authentication.getName())
                 .claim("auth", authorities)
                 .setIssuedAt(new Date(now))
                 .setExpiration(accessTokenExpiresIn)

@@ -10,8 +10,6 @@ import com.team2002.capstone.repository.MemberRepository;
 import com.team2002.capstone.repository.ProfileRepository;
 import com.team2002.capstone.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,8 +65,7 @@ public class MemberService {
         Optional<Profile> memberProfile = profileRepository.findByMember(member);
         boolean isNewUser = memberProfile.isEmpty();
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(member.getEmail(), member.getPassword());
-        JwtTokenDTO jwtTokenDTO = jwtTokenProvider.generateToken(authentication);
+        JwtTokenDTO jwtTokenDTO = jwtTokenProvider.generateToken(member, isNewUser);
 
         return LoginResponseDTO.builder()
                 .grantType(jwtTokenDTO.getGrantType())
