@@ -2,6 +2,7 @@ package com.team2002.capstone.config.auth;
 
 import com.team2002.capstone.domain.Member;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -13,6 +14,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class CustomOauth2UserDetails implements UserDetails, OAuth2User {
 
+    @Getter
     private final Member member;
     private Map<String, Object> attributes;
 

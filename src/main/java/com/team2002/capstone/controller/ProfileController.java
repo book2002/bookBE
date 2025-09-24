@@ -25,7 +25,7 @@ public class ProfileController {
     }
 
     @Operation(summary = "프로필 수정 (닉네임, 바이오)")
-    @PutMapping("/edit")
+    @PutMapping("/update")
     public ResponseEntity<Void> updateProfile(@RequestBody ProfileUpdateRequestDTO profileUpdateRequestDTO) {
         profileService.updateProfile(profileUpdateRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).build();

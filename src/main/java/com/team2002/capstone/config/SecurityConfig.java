@@ -1,6 +1,7 @@
 package com.team2002.capstone.config;
 
 import com.team2002.capstone.config.auth.CustomOauth2UserService;
+import com.team2002.capstone.config.auth.OAuth2LoginSuccessHandler;
 import com.team2002.capstone.config.jwt.JwtAuthenticationFilter;
 import com.team2002.capstone.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
     private final CustomOauth2UserService customOauth2UserService;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
@@ -37,6 +39,7 @@ public class SecurityConfig {
                                 .userService(customOauth2UserService) // ⭐ 커스텀 서비스 등록
                         )
                         .defaultSuccessUrl("/login-success", true) // 로그인 성공 후 리디렉션될 url
+                        .successHandler(oAuth2LoginSuccessHandler)
                 )
                 .logout((logoutConfig) -> logoutConfig.logoutSuccessUrl("/")
                 )
