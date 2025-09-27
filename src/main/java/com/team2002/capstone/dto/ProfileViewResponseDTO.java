@@ -4,18 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-
 @Builder
 @Getter
 @AllArgsConstructor
-public class ProfileResponseDTO {
-    private Long profileId;
-    private String nickName;
+public class ProfileViewResponseDTO {
+
+    private String nickname;
     private String bio;
 
     private int followerCount;
     private int followingCount;
 
-    private LocalDateTime createdAt;
+    private boolean isMyProfile;
+    private boolean isFollowing; // 현재 로그인한 사용자가 조회한 프로필을 팔로우 했는지 여부
 }

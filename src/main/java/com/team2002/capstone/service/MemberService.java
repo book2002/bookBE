@@ -52,7 +52,7 @@ public class MemberService {
     @Transactional
     public LoginResponseDTO login(LoginRequestDTO requestDTO) {
         Member member = memberRepository.findByEmail(requestDTO.getEmail())
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
 
         if(member.getProvider() != ProviderEnum.LOCAL) {
             throw new IllegalStateException("구글 회원은 구글 로그인을 이용해주세요.");
