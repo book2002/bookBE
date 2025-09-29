@@ -1,5 +1,6 @@
 package com.team2002.capstone.exception;
 
+import com.team2002.capstone.domain.common.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -22,11 +23,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorMessage);
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Response<Void>> handleResourceNotFoundException(ResourceNotFoundException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Response.failure(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+    }
+
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<String> handleIllegalStateException(IllegalStateException ex) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT) // 409 중복
-                .body(ex.getMessage());      // "이미 존재하는 회원입니다"
+                .body(ex.getMessage());
     }
 
     /*@ExceptionHandler(ConstraintViolationException.class)
