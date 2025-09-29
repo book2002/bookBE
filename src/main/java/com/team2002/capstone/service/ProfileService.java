@@ -5,6 +5,7 @@ import com.team2002.capstone.domain.Member;
 import com.team2002.capstone.domain.Profile;
 import com.team2002.capstone.domain.enums.GenderEnum;
 import com.team2002.capstone.dto.*;
+import com.team2002.capstone.exception.ResourceNotFoundException;
 import com.team2002.capstone.repository.FollowRepository;
 import com.team2002.capstone.repository.MemberRepository;
 import com.team2002.capstone.repository.ProfileRepository;
@@ -32,7 +33,7 @@ public class ProfileService {
         // 현재 로그인된 사용자 정보
         String userEmail = SecurityUtil.getCurrentUsername();
         Member member = memberRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("회원을 찾을 수 없습니다."));
 
         if (profileRepository.findByMember(member).isPresent()) {
             throw new IllegalStateException("이미 프로필을 생성했습니다.");
@@ -63,11 +64,7 @@ public class ProfileService {
 
     @Transactional
     public void updateProfile(ProfileUpdateRequestDTO requestDTO) {
-        String userEmail = SecurityUtil.getCurrentUsername();
-        Member member = memberRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
-        Profile profile = profileRepository.findByMember(member)
-                .orElseThrow(() -> new RuntimeException("프로필을 찾을 수 없습니다."));
+        Profile profile = getCurrentProfile();
 
         if(requestDTO.getNickname() != null && !requestDTO.getNickname().isBlank()) {
             profile.setNickname(requestDTO.getNickname());
@@ -79,14 +76,10 @@ public class ProfileService {
 
     @Transactional
     public ProfileViewResponseDTO getProfile(Long profileId) {
-        String userEmail = SecurityUtil.getCurrentUsername();
-        Member member = memberRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
-        Profile currentProfile = profileRepository.findByMember(member)
-                .orElseThrow(() -> new RuntimeException("현재 로그인한 사용자의 프로필을 찾을 수 없습니다."));
+        Profile currentProfile = getCurrentProfile();
 
         Profile viewProfile = profileRepository.findById(profileId)
-                .orElseThrow(() -> new RuntimeException("프로필을 찾을 수 없습니다.")); // 조회 대상
+                .orElseThrow(() -> new ResourceNotFoundException("프로필을 찾을 수 없습니다.")); // 조회 대상
 
         boolean isMyProfile = false;
         boolean isFollowing = false;
@@ -154,8 +147,8 @@ public class ProfileService {
     private Profile getCurrentProfile() {
         String userEmail = SecurityUtil.getCurrentUsername();
         Member member = memberRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("회원을 찾을 수 없습니다."));
         return profileRepository.findByMember(member)
-                .orElseThrow(() -> new RuntimeException("현재 로그인한 사용자의 프로필을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("현재 로그인한 사용자의 프로필을 찾을 수 없습니다."));
     }
 }

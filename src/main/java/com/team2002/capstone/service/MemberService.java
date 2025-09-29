@@ -6,6 +6,7 @@ import com.team2002.capstone.domain.Profile;
 import com.team2002.capstone.domain.enums.AccountStatusEnum;
 import com.team2002.capstone.domain.enums.ProviderEnum;
 import com.team2002.capstone.dto.*;
+import com.team2002.capstone.exception.ResourceNotFoundException;
 import com.team2002.capstone.repository.MemberRepository;
 import com.team2002.capstone.repository.ProfileRepository;
 import com.team2002.capstone.util.SecurityUtil;
@@ -52,7 +53,7 @@ public class MemberService {
     @Transactional
     public LoginResponseDTO login(LoginRequestDTO requestDTO) {
         Member member = memberRepository.findByEmail(requestDTO.getEmail())
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 회원입니다."));
 
         if(member.getProvider() != ProviderEnum.LOCAL) {
             throw new IllegalStateException("구글 회원은 구글 로그인을 이용해주세요.");
@@ -79,7 +80,7 @@ public class MemberService {
     public void updatePassword(MemberUpdateRequestDTO requestDTO) {
         String userEmail = SecurityUtil.getCurrentUsername();
         Member member = memberRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("회원을 찾을 수 없습니다."));
 
         if(!passwordEncoder.matches(requestDTO.getOldPassword(), member.getPassword())) {
             throw new IllegalStateException("기존 비밀번호가 일치하지 않습니다.");
@@ -91,7 +92,7 @@ public class MemberService {
     public void inactivateMember() {
         String userEmail = SecurityUtil.getCurrentUsername();
         Member member = memberRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("회원을 찾을 수 없습니다."));
 
         member.setStatus(AccountStatusEnum.INACTIVE);
     }
@@ -100,7 +101,7 @@ public class MemberService {
     public void deleteMember() {
         String userEmail = SecurityUtil.getCurrentUsername();
         Member member = memberRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("회원을 찾을 수 없습니다."));
 
         Profile profile = member.getProfile();
         if (profile != null) {

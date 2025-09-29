@@ -33,7 +33,7 @@ public class Response<T> {
     }
 
     // 실패 응답 (메시지를 직접 입력)
-    public static Response<Void> failure(String message) {
+    public static Response<Void> failure(int value, String message) {
         return Response.<Void>builder()
                 .code(ResponseType.BAD_REQUEST.getCode()) // 400이 아닌 경우 변경 필요
                 .message(message)

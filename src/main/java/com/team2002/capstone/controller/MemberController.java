@@ -35,7 +35,7 @@ public class MemberController {
 
     @Operation(summary = "비밀번호 변경")
     @PutMapping("/password")
-    public ResponseEntity<Void> updatePassword(@RequestBody MemberUpdateRequestDTO memberUpdateRequestDTO){
+    public ResponseEntity<Void> updatePassword(@Validated @RequestBody MemberUpdateRequestDTO memberUpdateRequestDTO){
         memberService.updatePassword(memberUpdateRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
