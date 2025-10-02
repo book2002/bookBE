@@ -3,6 +3,7 @@ package com.team2002.capstone.service;
 import com.team2002.capstone.domain.Follow;
 import com.team2002.capstone.domain.Member;
 import com.team2002.capstone.domain.Profile;
+import com.team2002.capstone.dto.FollowResponseDTO;
 import com.team2002.capstone.exception.ResourceNotFoundException;
 import com.team2002.capstone.repository.FollowRepository;
 import com.team2002.capstone.repository.MemberRepository;
@@ -29,7 +30,7 @@ public class FollowService {
     }
 
     @Transactional
-    public void follow(Long followingId) {
+    public FollowResponseDTO follow(Long followingId) {
         Profile follower = getCurrentProfile();
         Profile following = profileRepository.findById(followingId)
                 .orElseThrow(() -> new ResourceNotFoundException("팔로우 대상 프로필을 찾을 수 없습니다."));
@@ -43,7 +44,12 @@ public class FollowService {
                 .following(following)
                 .build();
         followRepository.save(follow);
-//        return follow.getId();
+
+        return FollowResponseDTO.builder()
+                .id(follow.getId())
+                .followerName(follower.getNickname())
+                .followingName(following.getNickname())
+                .build();
     }
 
     @Transactional
