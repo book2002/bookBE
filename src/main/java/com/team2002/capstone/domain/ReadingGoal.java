@@ -19,7 +19,7 @@ public class ReadingGoal extends BaseEntity{
     private Long id;
 
     @Column(nullable = false)
-    private int year;
+    private int targetYear;
 
     @Column(nullable = false)
     private int targetBooks;

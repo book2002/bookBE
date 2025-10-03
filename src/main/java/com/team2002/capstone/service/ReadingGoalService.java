@@ -27,14 +27,14 @@ public class ReadingGoalService {
     public ReadingGoalResponseDTO createOrUpdateGoal(ReadingGoalRequestDTO requestDTO) {
         Profile profile = getCurrentProfile();
 
-        ReadingGoal goal = readingGoalRepository.findByProfileAndYear(profile, requestDTO.getYear())
+        ReadingGoal goal = readingGoalRepository.findByProfileAndTargetYear(profile, requestDTO.getYear())
                 .orElse(null); // 해당 연도에 목표가 있는지 확인
 
         if (goal != null) {
             goal.setTargetBooks(requestDTO.getTargetBooks());
         } else {
             goal = ReadingGoal.builder()
-                    .year(requestDTO.getYear())
+                    .targetYear(requestDTO.getYear())
                     .targetBooks(requestDTO.getTargetBooks())
                     .profile(profile)
                     .build();
@@ -43,7 +43,7 @@ public class ReadingGoalService {
 
         return ReadingGoalResponseDTO.builder()
                 .id(goal.getId())
-                .year(goal.getYear())
+                .year(goal.getTargetYear())
                 .targetBooks(goal.getTargetBooks())
                 .build();
     }
@@ -52,12 +52,12 @@ public class ReadingGoalService {
         Profile profile = getCurrentProfile();
         int currentYear = Year.now().getValue();
 
-        ReadingGoal goal = readingGoalRepository.findByProfileAndYear(profile, currentYear)
+        ReadingGoal goal = readingGoalRepository.findByProfileAndTargetYear(profile, currentYear)
                 .orElseThrow(() -> new ResourceNotFoundException("올해의 독서 목표를 찾을 수 없습니다."));
 
         return ReadingGoalResponseDTO.builder()
                 .id(goal.getId())
-                .year(goal.getYear())
+                .year(goal.getTargetYear())
                 .targetBooks(goal.getTargetBooks())
                 .build();
     }
