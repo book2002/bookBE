@@ -37,5 +37,11 @@ public class Review {
         this.isPublic = reviewDto.isPublic();
         this.createdAt = LocalDateTime.now();
     }
+
+    public void update(ReviewDto reviewDto) {
+        this.content = reviewDto.getContent();
+        this.rating = reviewDto.getRating();
+        this.isPublic = reviewDto.isPublic();
+    }
 }
 
