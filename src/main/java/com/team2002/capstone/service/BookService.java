@@ -135,4 +135,27 @@ public class BookService {
     public List<Review> getReviewsByItemId(long itemId) {
         return reviewRepository.findByBookShelfItem_ItemId(itemId);
     }
+
+    public void deleteReview(Long reviewId) {
+        // reviewId에 해당하는 Review가 존재하는지 먼저 확인합니다. 없으면 예외가 발생합니다.
+        if (!reviewRepository.existsById(reviewId)) {
+            throw new IllegalArgumentException("존재하지 않는 리뷰입니다. reviewId=" + reviewId);
+        }
+        // 존재하면 삭제합니다.
+        reviewRepository.deleteById(reviewId);
+    }
+
+    @Transactional
+    public Review updateReview(Long reviewId, ReviewDto reviewDto) {
+        // 1. reviewId로 수정할 리뷰를 DB에서 찾아옵니다.
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다. reviewId=" + reviewId));
+
+        // 2. 찾아온 리뷰 객체의 내용을 업데이트합니다.
+        review.update(reviewDto);
+
+        // 3. @Transactional에 의해 메소드가 끝나면 변경된 내용이 자동으로 DB에 저장됩니다.
+        return review;
+    }
 }
+
