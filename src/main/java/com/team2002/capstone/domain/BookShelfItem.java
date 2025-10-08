@@ -33,7 +33,7 @@ public class BookShelfItem {
     // --- BookShelf와의 관계 설정 ---
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shelf_id", nullable = false)
-    @JsonBackReference // Review와 마찬가지로 순환 참조 방지
+    @JsonBackReference
     private BookShelf bookShelf;
     // ----------------------------
 
@@ -42,15 +42,17 @@ public class BookShelfItem {
 
     private LocalDateTime createdAt;
 
-    // --- Review와의 관계 설정 ---
     @OneToMany(mappedBy = "bookShelfItem", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Review> reviews = new ArrayList<>();
-    // --------------------------
 
     public enum ReadState {
         WANT_TO_READ, READING, COMPLETED
     }
+
+    @OneToMany(mappedBy = "bookShelfItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<MemorableSentence> memorableSentences = new ArrayList<>();
 
     // 생성자도 BookShelf 객체를 직접 받도록 수정
     public BookShelfItem(BookDto bookDto, BookShelf bookShelf) {

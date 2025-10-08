@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.team2002.capstone.repository.BookShelfItemRepository;
 import com.team2002.capstone.repository.BookShelfRepository;
+import com.team2002.capstone.domain.MemorableSentence;
+import com.team2002.capstone.dto.MemorableSentenceDto;
+import com.team2002.capstone.repository.MemorableSentenceRepository;
 
 
 import java.time.LocalDate;
@@ -30,16 +33,19 @@ public class BookService {
     private final BookShelfItemRepository bookShelfItemRepository;
     private final WebClient webClient;
     private final ReviewRepository reviewRepository;
+    private final MemorableSentenceRepository memorableSentenceRepository;
     // 카카오 REST API 키를 입력
     private final String KAKAO_REST_API_KEY = "a3447f2a4204dc00c0f3f2f6ca9a7efb";
 
     public BookService(WebClient.Builder webClientBuilder,
                        BookShelfRepository bookShelfRepository,
-                       BookShelfItemRepository bookShelfItemRepository, ReviewRepository reviewRepository) {
+                       BookShelfItemRepository bookShelfItemRepository, ReviewRepository reviewRepository,
+                       MemorableSentenceRepository memorableSentenceRepository) {
         this.webClient = webClientBuilder.baseUrl("https://dapi.kakao.com").build();
         this.bookShelfRepository = bookShelfRepository;
         this.bookShelfItemRepository = bookShelfItemRepository;
         this.reviewRepository = reviewRepository;
+        this.memorableSentenceRepository = memorableSentenceRepository;
     }
 
     // API에서 받은 DTO를 그대로 반환
@@ -93,6 +99,7 @@ public class BookService {
         }
     }
 
+    //BookShelf
     @Transactional
     public BookShelfItem saveBookToMyShelf(BookDto bookDto) {
         BookShelf defaultShelf = bookShelfRepository.findById(1L)
@@ -112,18 +119,16 @@ public class BookService {
     public List<BookShelfItemDto> getMyShelfItems() {
         // ID가 1인 책장
         return bookShelfRepository.findById(1L)
-                // 해당 책장의 모든 BookShelfItem
                 .map(bookShelfItemRepository::findByBookShelf)
-                // 각 BookShelfItem을 BookShelfItemDto로 변환
                 .orElse(Collections.emptyList()).stream()
-                .map(BookShelfItemDto::new) // Entity -> DTO 변환
+                .map(BookShelfItemDto::new)
                 .collect(Collectors.toList());
     }
-
     public void deleteBookFromMyShelf(Long itemId) {
         bookShelfItemRepository.deleteById(itemId);
     }
 
+    // Review
     @Transactional
     public Review saveReview(ReviewDto reviewDto) {
         BookShelfItem bookShelfItem = bookShelfItemRepository.findById(reviewDto.getItemId())
@@ -137,25 +142,46 @@ public class BookService {
     }
 
     public void deleteReview(Long reviewId) {
-        // reviewId에 해당하는 Review가 존재하는지 먼저 확인합니다. 없으면 예외가 발생합니다.
         if (!reviewRepository.existsById(reviewId)) {
             throw new IllegalArgumentException("존재하지 않는 리뷰입니다. reviewId=" + reviewId);
         }
-        // 존재하면 삭제합니다.
         reviewRepository.deleteById(reviewId);
     }
 
     @Transactional
     public Review updateReview(Long reviewId, ReviewDto reviewDto) {
-        // 1. reviewId로 수정할 리뷰를 DB에서 찾아옵니다.
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다. reviewId=" + reviewId));
-
-        // 2. 찾아온 리뷰 객체의 내용을 업데이트합니다.
         review.update(reviewDto);
-
-        // 3. @Transactional에 의해 메소드가 끝나면 변경된 내용이 자동으로 DB에 저장됩니다.
         return review;
+    }
+
+    // MemorableSentence
+    @Transactional
+    public MemorableSentence saveMemorableSentence(MemorableSentenceDto dto) {
+        BookShelfItem bookShelfItem = bookShelfItemRepository.findById(dto.getItemId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 책입니다. itemId=" + dto.getItemId()));
+        MemorableSentence newSentence = new MemorableSentence(dto, bookShelfItem);
+        return memorableSentenceRepository.save(newSentence);
+    }
+
+    public List<MemorableSentence> getMemorableSentencesByItemId(Long itemId) {
+        return memorableSentenceRepository.findByBookShelfItem_ItemId(itemId);
+    }
+
+    @Transactional
+    public MemorableSentence updateMemorableSentence(Long sentenceId, MemorableSentenceDto dto) {
+        MemorableSentence sentence = memorableSentenceRepository.findById(sentenceId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 문장입니다. sentenceId=" + sentenceId));
+        sentence.update(dto);
+        return sentence;
+    }
+
+    public void deleteMemorableSentence(Long sentenceId) {
+        if (!memorableSentenceRepository.existsById(sentenceId)) {
+            throw new IllegalArgumentException("존재하지 않는 문장입니다. sentenceId=" + sentenceId);
+        }
+        memorableSentenceRepository.deleteById(sentenceId);
     }
 }
 
