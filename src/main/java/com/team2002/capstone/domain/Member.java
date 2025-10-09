@@ -30,6 +30,10 @@ public class Member extends BaseEntity {
 
     private String googleId;
 
+    private String fcmToken;
+
+    private boolean isHabitTrackerActive = true;
+
     @Enumerated(EnumType.STRING)
     private AccountStatusEnum status;
 
