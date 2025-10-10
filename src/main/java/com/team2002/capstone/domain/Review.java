@@ -1,7 +1,8 @@
 package com.team2002.capstone.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.team2002.capstone.dto.ReviewDto;
+import com.team2002.capstone.dto.ReviewSaveRequestDto;
+import com.team2002.capstone.dto.ReviewUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +31,7 @@ public class Review {
     private boolean isPublic;
     private LocalDateTime createdAt;
 
-    public Review(ReviewDto reviewDto, BookShelfItem bookShelfItem) {
+    public Review(ReviewSaveRequestDto reviewDto, BookShelfItem bookShelfItem) {
         this.bookShelfItem = bookShelfItem;
         this.content = reviewDto.getContent();
         this.rating = reviewDto.getRating();
@@ -38,7 +39,7 @@ public class Review {
         this.createdAt = LocalDateTime.now();
     }
 
-    public void update(ReviewDto reviewDto) {
+    public void update(ReviewUpdateRequestDto reviewDto) {
         this.content = reviewDto.getContent();
         this.rating = reviewDto.getRating();
         this.isPublic = reviewDto.isPublic();
