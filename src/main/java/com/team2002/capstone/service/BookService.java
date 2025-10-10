@@ -3,10 +3,7 @@ package com.team2002.capstone.service;
 import com.team2002.capstone.domain.BookShelf;
 import com.team2002.capstone.domain.BookShelfItem;
 import com.team2002.capstone.domain.Review;
-import com.team2002.capstone.dto.BookDto;
-import com.team2002.capstone.dto.BookShelfItemDto;
-import com.team2002.capstone.dto.KakaoBookSearchResponseDto;
-import com.team2002.capstone.dto.ReviewDto;
+import com.team2002.capstone.dto.*;
 import com.team2002.capstone.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +11,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.team2002.capstone.repository.BookShelfItemRepository;
 import com.team2002.capstone.repository.BookShelfRepository;
 import com.team2002.capstone.domain.MemorableSentence;
-import com.team2002.capstone.dto.MemorableSentenceDto;
 import com.team2002.capstone.repository.MemorableSentenceRepository;
 
 
@@ -130,15 +126,27 @@ public class BookService {
 
     // Review
     @Transactional
-    public Review saveReview(ReviewDto reviewDto) {
+    public ReviewResponseDto saveReview(ReviewSaveRequestDto reviewDto) {
         BookShelfItem bookShelfItem = bookShelfItemRepository.findById(reviewDto.getItemId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 책입니다. itemId=" + reviewDto.getItemId()));
         Review newReview = new Review(reviewDto, bookShelfItem);
-        return reviewRepository.save(newReview);
+        Review savedReview = reviewRepository.save(newReview);
+        return new ReviewResponseDto(savedReview);
     }
 
-    public List<Review> getReviewsByItemId(long itemId) {
-        return reviewRepository.findByBookShelfItem_ItemId(itemId);
+    public List<ReviewResponseDto> getReviewsByItemId(Long itemId) {
+        return reviewRepository.findByBookShelfItem_ItemId(itemId).stream()
+                .map(ReviewResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public ReviewResponseDto updateReview(Long reviewId, ReviewUpdateRequestDto requestDto) { // DTO 변경
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다. reviewId=" + reviewId));
+
+        review.update(requestDto); // Entity의 update 메소드도 이 DTO를 받도록 수정 필요
+        return new ReviewResponseDto(review);
     }
 
     public void deleteReview(Long reviewId) {
@@ -146,14 +154,6 @@ public class BookService {
             throw new IllegalArgumentException("존재하지 않는 리뷰입니다. reviewId=" + reviewId);
         }
         reviewRepository.deleteById(reviewId);
-    }
-
-    @Transactional
-    public Review updateReview(Long reviewId, ReviewDto reviewDto) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰입니다. reviewId=" + reviewId));
-        review.update(reviewDto);
-        return review;
     }
 
     // MemorableSentence
@@ -183,5 +183,16 @@ public class BookService {
         }
         memorableSentenceRepository.deleteById(sentenceId);
     }
+
+    // BookProgress
+    @Transactional
+    public BookShelfItem updateBookProgress(Long itemId, ProgressUpdateRequestDto dto) {
+        BookShelfItem item = bookShelfItemRepository.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 책입니다. itemId=" + itemId));
+
+        item.updateProgress(dto.getCurrentPage(), dto.getTotalPage());
+        return item;
+    }
+
 }
 

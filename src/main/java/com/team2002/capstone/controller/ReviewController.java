@@ -1,9 +1,11 @@
 package com.team2002.capstone.controller;
 
-import com.team2002.capstone.domain.BookShelfItem;
 import com.team2002.capstone.domain.Review;
-import com.team2002.capstone.dto.ReviewDto;
+import com.team2002.capstone.dto.ReviewResponseDto;
+import com.team2002.capstone.dto.ReviewSaveRequestDto;
+import com.team2002.capstone.dto.ReviewUpdateRequestDto;
 import com.team2002.capstone.service.BookService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,30 +21,34 @@ public class ReviewController {
         this.bookService = bookService;
     }
 
-    // 독서 감상문 저장
+    // 독서감상문 작성 후 저장
     @PostMapping("/write")
-    public ResponseEntity<Review> saveReview(@RequestBody ReviewDto reviewDto) {
-        Review savedReview = bookService.saveReview(reviewDto);
-        return ResponseEntity.ok(savedReview);
+    public ResponseEntity<ReviewResponseDto> saveReview(@Valid @RequestBody ReviewSaveRequestDto requestDto) {
+        ReviewResponseDto responseDto = bookService.saveReview(requestDto);
+        return ResponseEntity.ok(responseDto);
     }
 
-    // 저장한 리뷰 조회 - 책 마다
-    @GetMapping("/book/{itemId}") // /api/reviews/book/1, /api/reviews/book/2
-    public ResponseEntity<List<Review>> getReviewsByItemId(@PathVariable Long itemId) {
-        List<Review> reviews = bookService.getReviewsByItemId(itemId);
-        return ResponseEntity.ok(reviews);
+    // 독서 감상문 조회
+    @GetMapping("/book/{itemId}")
+    public ResponseEntity<List<ReviewResponseDto>> getReviewsByItemId(@PathVariable Long itemId) {
+        List<ReviewResponseDto> responseDtos = bookService.getReviewsByItemId(itemId);
+        return ResponseEntity.ok(responseDtos);
     }
 
+    //  독서 감상문 수정
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<ReviewResponseDto> updateReview(
+            @PathVariable Long reviewId,
+            @Valid @RequestBody ReviewUpdateRequestDto requestDto) { // DTO 변경
+        ReviewResponseDto responseDto = bookService.updateReview(reviewId, requestDto);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    // 독서 감상문 삭제
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
         bookService.deleteReview(reviewId);
         return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/{reviewId}")
-    public ResponseEntity<Review> updateReview(@PathVariable Long reviewId, @RequestBody ReviewDto reviewDto) {
-        Review updatedReview = bookService.updateReview(reviewId, reviewDto);
-        return ResponseEntity.ok(updatedReview);
     }
 
 }

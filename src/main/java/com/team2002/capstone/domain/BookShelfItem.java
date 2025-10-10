@@ -40,6 +40,9 @@ public class BookShelfItem {
     @Enumerated(EnumType.STRING)
     private ReadState state;
 
+    private Integer currentPage;
+    private Integer totalPage;
+
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "bookShelfItem", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -54,15 +57,33 @@ public class BookShelfItem {
     @JsonManagedReference
     private List<MemorableSentence> memorableSentences = new ArrayList<>();
 
-    // 생성자도 BookShelf 객체를 직접 받도록 수정
     public BookShelfItem(BookDto bookDto, BookShelf bookShelf) {
         this.isbn = bookDto.getIsbn();
         this.title = bookDto.getTitle();
         this.author = String.join(", ", bookDto.getAuthors());
         this.thumbnail = bookDto.getThumbnail();
         this.bookShelf = bookShelf; // shelfId 대신 bookShelf 객체 자체를 저장
-        this.state = ReadState.WANT_TO_READ;
+        this.state = ReadState.WANT_TO_READ; // 읽기 전
+        this.currentPage = 0;
+        this.totalPage = 300; // 임시값 ->  사용자에게 입력받을 것
         this.createdAt = LocalDateTime.now();
+    }
+
+    public void updateProgress(Integer newCurrentPage, Integer newTotalPage) {
+        if (newTotalPage != null) {
+            this.totalPage = newTotalPage;
+        }
+        if (newCurrentPage != null) {
+            this.currentPage = newCurrentPage;
+        }
+        if (this.currentPage > 0 && this.currentPage < this.totalPage) {
+            this.state = ReadState.READING;
+        } else if (this.currentPage >= this.totalPage) {
+            this.currentPage = this.totalPage;
+            this.state = ReadState.COMPLETED;
+        } else {
+            this.state = ReadState.WANT_TO_READ;
+        }
     }
 }
 

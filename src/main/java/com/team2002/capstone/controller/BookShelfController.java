@@ -2,6 +2,7 @@ package com.team2002.capstone.controller;
 
 import com.team2002.capstone.domain.BookShelfItem;
 import com.team2002.capstone.dto.BookDto;
+import com.team2002.capstone.dto.ProgressUpdateRequestDto;
 import com.team2002.capstone.service.BookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class BookShelfController {
         }
     }
 
-    @GetMapping("/items")
+    @GetMapping("/items") // 내 책장에 책 조회
     public ResponseEntity<List<BookShelfItemDto>> getMyShelfItems() {
         List<BookShelfItemDto> items = bookService.getMyShelfItems();
         return ResponseEntity.ok(items);
@@ -41,4 +42,13 @@ public class BookShelfController {
         bookService.deleteBookFromMyShelf(itemId);
         return ResponseEntity.noContent().build(); // 성공 시 204 No Content 반환
     }
+
+    @PatchMapping("/items/{itemId}/progress") // 독서 진행률
+    public ResponseEntity<BookShelfItem> updateBookProgress(
+            @PathVariable Long itemId,
+            @RequestBody ProgressUpdateRequestDto dto) {
+        BookShelfItem updatedItem = bookService.updateBookProgress(itemId, dto);
+        return ResponseEntity.ok(updatedItem);
+    }
+
 }
