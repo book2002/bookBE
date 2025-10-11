@@ -5,10 +5,10 @@ import com.team2002.capstone.dto.HabitTrackerRequestDTO;
 import com.team2002.capstone.dto.HabitTrackerResponseDTO;
 import com.team2002.capstone.service.HabitTrackerService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -22,7 +22,7 @@ public class HabitTrackerController {
 
     @Operation(summary = "독서 기록")
     @PostMapping("/record")
-    public ResponseEntity<HabitTrackerResponseDTO> checkInHabit(@RequestBody @Valid HabitTrackerRequestDTO habitTrackerRequestDTO) {
+    public ResponseEntity<HabitTrackerResponseDTO> checkInHabit(@RequestBody @Validated HabitTrackerRequestDTO habitTrackerRequestDTO) {
         HabitTrackerResponseDTO responseDTO = habitTrackerService.record(habitTrackerRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
@@ -44,7 +44,7 @@ public class HabitTrackerController {
 
     @Operation(summary = "알림 활성화/비활성화")
     @PutMapping("/active")
-    public ResponseEntity<HabitTrackerResponseDTO> updateActiveStatus(@RequestBody @Valid HabitStatusUpdateRequestDTO habitStatusUpdateRequestDTO) {
+    public ResponseEntity<HabitTrackerResponseDTO> updateActiveStatus(@RequestBody @Validated HabitStatusUpdateRequestDTO habitStatusUpdateRequestDTO) {
         HabitTrackerResponseDTO habitTrackerResponseDTO = habitTrackerService.updateHabitActiveStatus(habitStatusUpdateRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(habitTrackerResponseDTO);
     }
