@@ -33,7 +33,7 @@ public class ReadingHabitService {
                 .member(member)
                 .targetTime(requestDTO.getTargetTime())
                 .recurringDays(String.join(",", requestDTO.getDaysOfWeek()))
-                .isActive(requestDTO.isActive())
+                .isActive(true)
                 .build();
 
         readingHabitRepository.save(readingHabit);
@@ -52,7 +52,6 @@ public class ReadingHabitService {
 
         readingHabit.setTargetTime(requestDTO.getTargetTime());
         readingHabit.setRecurringDays(String.join(",", requestDTO.getDaysOfWeek()));
-        readingHabit.setActive(requestDTO.isActive());
 
         return ReadingHabitResponseDTO.builder()
                 .id(readingHabit.getId())
@@ -98,12 +97,11 @@ public class ReadingHabitService {
     }
 
     @Transactional
-    public ReadingHabitResponseDTO updateHabitActiveStatus(HabitStatusUpdateRequestDTO requestDTO) {
+    public ReadingHabitResponseDTO updateHabitActiveStatus(Long habitId, HabitStatusUpdateRequestDTO requestDTO) {
         Member member = getCurrentMember();
-        ReadingHabit readingHabit = readingHabitRepository.findByMember(member)
+        ReadingHabit readingHabit = readingHabitRepository.findByIdAndMember(habitId, member)
                 .orElseThrow(() -> new ResourceNotFoundException("Reading Habit not found"));
         readingHabit.setActive(requestDTO.isActive());
-        readingHabitRepository.save(readingHabit);
 
         return ReadingHabitResponseDTO.builder()
                 .id(readingHabit.getId())

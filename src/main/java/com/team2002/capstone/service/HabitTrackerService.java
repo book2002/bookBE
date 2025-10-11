@@ -3,6 +3,7 @@ package com.team2002.capstone.service;
 import com.team2002.capstone.domain.HabitTracker;
 import com.team2002.capstone.domain.Member;
 import com.team2002.capstone.dto.HabitStatusUpdateRequestDTO;
+import com.team2002.capstone.dto.HabitStatusUpdateResponseDTO;
 import com.team2002.capstone.dto.HabitTrackerRequestDTO;
 import com.team2002.capstone.dto.HabitTrackerResponseDTO;
 import com.team2002.capstone.exception.ResourceNotFoundException;
@@ -74,12 +75,12 @@ public class HabitTrackerService {
     }
 
     @Transactional
-    public HabitTrackerResponseDTO updateHabitActiveStatus(HabitStatusUpdateRequestDTO requestDTO) {
+    public HabitStatusUpdateResponseDTO updateHabitActiveStatus(HabitStatusUpdateRequestDTO requestDTO) {
         Member member = getCurrentMember();
         member.setHabitTrackerActive(requestDTO.isActive());
         memberRepository.save(member);
 
-        return HabitTrackerResponseDTO.builder()
+        return HabitStatusUpdateResponseDTO.builder()
                 .memberId(member.getId())
                 .isActive(member.isHabitTrackerActive())
                 .build();
