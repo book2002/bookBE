@@ -54,6 +54,13 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @Operation(summary = "FCM 토큰 초기 저장 및 갱신")
+    @PutMapping("/fcm-token")
+    public ResponseEntity<Void> updateFcmToken(@Validated @RequestBody FcmTokenRequestDTO fcmTokenRequestDTO) {
+        memberService.updateFcmToken(fcmTokenRequestDTO);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
     @PostMapping("/test")
     @ResponseBody
     public String test() {

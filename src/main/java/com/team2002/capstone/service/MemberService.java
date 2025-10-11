@@ -110,4 +110,13 @@ public class MemberService {
 
         memberRepository.delete(member);
     }
+
+    @Transactional
+    public void updateFcmToken(FcmTokenRequestDTO requestDTO) {
+        String userEmail = SecurityUtil.getCurrentUsername();
+        Member member = memberRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("회원을 찾을 수 없습니다."));
+
+        member.setFcmToken(requestDTO.getFcmToken());
+    }
 }

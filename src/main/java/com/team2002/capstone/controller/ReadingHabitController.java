@@ -1,15 +1,14 @@
 package com.team2002.capstone.controller;
 
 import com.team2002.capstone.dto.HabitStatusUpdateRequestDTO;
-import com.team2002.capstone.dto.HabitTrackerResponseDTO;
 import com.team2002.capstone.dto.ReadingHabitRequestDTO;
 import com.team2002.capstone.dto.ReadingHabitResponseDTO;
 import com.team2002.capstone.service.ReadingHabitService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public class ReadingHabitController {
 
     @Operation(summary = "새로운 독서 습관 생성")
     @PostMapping
-    public ResponseEntity<ReadingHabitResponseDTO> createReadingHabit(@RequestBody @Valid ReadingHabitRequestDTO requestDTO) {
+    public ResponseEntity<ReadingHabitResponseDTO> createReadingHabit(@RequestBody @Validated ReadingHabitRequestDTO requestDTO) {
         ReadingHabitResponseDTO responseDTO = readingHabitService.createReadingHabit(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
@@ -31,7 +30,7 @@ public class ReadingHabitController {
     @PutMapping("/{habitId}")
     public ResponseEntity<ReadingHabitResponseDTO> updateReadingHabit(
             @PathVariable Long habitId,
-            @RequestBody @Valid ReadingHabitRequestDTO requestDTO
+            @RequestBody @Validated ReadingHabitRequestDTO requestDTO
     ) {
         ReadingHabitResponseDTO responseDTO = readingHabitService.updateReadingHabit(habitId, requestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
@@ -60,7 +59,7 @@ public class ReadingHabitController {
 
     @Operation(summary = "알림 활성화/비활성화")
     @PutMapping("/active")
-    public ResponseEntity<ReadingHabitResponseDTO> updateActiveStatus(@RequestBody @Valid HabitStatusUpdateRequestDTO habitStatusUpdateRequestDTO) {
+    public ResponseEntity<ReadingHabitResponseDTO> updateActiveStatus(@RequestBody @Validated HabitStatusUpdateRequestDTO habitStatusUpdateRequestDTO) {
         ReadingHabitResponseDTO readingHabitResponseDTO = readingHabitService.updateHabitActiveStatus(habitStatusUpdateRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(readingHabitResponseDTO);
     }
