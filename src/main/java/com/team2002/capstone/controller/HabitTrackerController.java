@@ -1,6 +1,7 @@
 package com.team2002.capstone.controller;
 
 import com.team2002.capstone.dto.HabitStatusUpdateRequestDTO;
+import com.team2002.capstone.dto.HabitStatusUpdateResponseDTO;
 import com.team2002.capstone.dto.HabitTrackerRequestDTO;
 import com.team2002.capstone.dto.HabitTrackerResponseDTO;
 import com.team2002.capstone.service.HabitTrackerService;
@@ -23,8 +24,8 @@ public class HabitTrackerController {
     @Operation(summary = "독서 기록")
     @PostMapping("/record")
     public ResponseEntity<HabitTrackerResponseDTO> checkInHabit(@RequestBody @Validated HabitTrackerRequestDTO habitTrackerRequestDTO) {
-        HabitTrackerResponseDTO responseDTO = habitTrackerService.record(habitTrackerRequestDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        HabitTrackerResponseDTO habitTrackerResponseDTO = habitTrackerService.record(habitTrackerRequestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(habitTrackerResponseDTO);
     }
 
     @Operation(summary = "독서 기록 상태 조회 (한 달 단위)")
@@ -38,14 +39,14 @@ public class HabitTrackerController {
     @Operation(summary = "오늘 독서 기록 상태 조회")
     @GetMapping("/today")
     public ResponseEntity<HabitTrackerResponseDTO> getTodayHabit() {
-        HabitTrackerResponseDTO responseDTO = habitTrackerService.getTodayHabitRecord();
-        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        HabitTrackerResponseDTO habitTrackerResponseDTO = habitTrackerService.getTodayHabitRecord();
+        return ResponseEntity.status(HttpStatus.OK).body(habitTrackerResponseDTO);
     }
 
     @Operation(summary = "알림 활성화/비활성화")
     @PutMapping("/active")
-    public ResponseEntity<HabitTrackerResponseDTO> updateActiveStatus(@RequestBody @Validated HabitStatusUpdateRequestDTO habitStatusUpdateRequestDTO) {
-        HabitTrackerResponseDTO habitTrackerResponseDTO = habitTrackerService.updateHabitActiveStatus(habitStatusUpdateRequestDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(habitTrackerResponseDTO);
+    public ResponseEntity<HabitStatusUpdateResponseDTO> updateActiveStatus(@RequestBody @Validated HabitStatusUpdateRequestDTO habitStatusUpdateRequestDTO) {
+        HabitStatusUpdateResponseDTO habitStatusUpdateResponseDTO = habitTrackerService.updateHabitActiveStatus(habitStatusUpdateRequestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(habitStatusUpdateResponseDTO);
     }
 }

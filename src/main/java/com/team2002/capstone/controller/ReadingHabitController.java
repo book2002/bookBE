@@ -22,8 +22,8 @@ public class ReadingHabitController {
     @Operation(summary = "새로운 독서 습관 생성")
     @PostMapping
     public ResponseEntity<ReadingHabitResponseDTO> createReadingHabit(@RequestBody @Validated ReadingHabitRequestDTO requestDTO) {
-        ReadingHabitResponseDTO responseDTO = readingHabitService.createReadingHabit(requestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+        ReadingHabitResponseDTO readingHabitResponseDTO = readingHabitService.createReadingHabit(requestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(readingHabitResponseDTO);
     }
 
     @Operation(summary = "독서 습관 수정")
@@ -32,8 +32,8 @@ public class ReadingHabitController {
             @PathVariable Long habitId,
             @RequestBody @Validated ReadingHabitRequestDTO requestDTO
     ) {
-        ReadingHabitResponseDTO responseDTO = readingHabitService.updateReadingHabit(habitId, requestDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        ReadingHabitResponseDTO readingHabitResponseDTO = readingHabitService.updateReadingHabit(habitId, requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(readingHabitResponseDTO);
     }
 
     @Operation(summary = "독서 습관 목록 조회")
@@ -46,8 +46,8 @@ public class ReadingHabitController {
     @Operation(summary = "특정 독서 습관 조회")
     @GetMapping("/{habitId}")
     public ResponseEntity<ReadingHabitResponseDTO> getReadingHabit(@PathVariable Long habitId) {
-        ReadingHabitResponseDTO responseDTO = readingHabitService.getReadingHabit(habitId);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        ReadingHabitResponseDTO readingHabitResponseDTO = readingHabitService.getReadingHabit(habitId);
+        return ResponseEntity.status(HttpStatus.OK).body(readingHabitResponseDTO);
     }
 
     @Operation(summary = "특정 독서 습관 삭제")
@@ -58,9 +58,9 @@ public class ReadingHabitController {
     }
 
     @Operation(summary = "알림 활성화/비활성화")
-    @PutMapping("/active")
-    public ResponseEntity<ReadingHabitResponseDTO> updateActiveStatus(@RequestBody @Validated HabitStatusUpdateRequestDTO habitStatusUpdateRequestDTO) {
-        ReadingHabitResponseDTO readingHabitResponseDTO = readingHabitService.updateHabitActiveStatus(habitStatusUpdateRequestDTO);
+    @PutMapping("/{habitId}/active")
+    public ResponseEntity<ReadingHabitResponseDTO> updateActiveStatus(@PathVariable Long habitId, @RequestBody @Validated HabitStatusUpdateRequestDTO habitStatusUpdateRequestDTO) {
+        ReadingHabitResponseDTO readingHabitResponseDTO = readingHabitService.updateHabitActiveStatus(habitId, habitStatusUpdateRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(readingHabitResponseDTO);
     }
 }

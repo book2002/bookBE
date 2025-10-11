@@ -15,5 +15,4 @@ public class ReadingHabitRequestDTO {
     private String targetTime;
     @NotEmpty(message = "요일 설정은 필수입니다.")
     private List<String> daysOfWeek;
-    private boolean isActive;
 }
